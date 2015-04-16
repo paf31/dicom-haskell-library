@@ -19,7 +19,6 @@ library
                        Data.DICOM.Tag, 
                        Data.DICOM.VL, 
                        Data.DICOM.VR
-  other-extensions:    OverloadedStrings, PatternSynonyms
   build-depends:       base >=4.7 && <4.8, 
                        time >=1.4 && <1.5, 
                        bytestring >=0.10 && <0.11, 
