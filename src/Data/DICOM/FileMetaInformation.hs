@@ -15,7 +15,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Data.DICOM.FileMetaInformation ( fileMetaInformation ) where
+module Data.DICOM.FileMetaInformation ( 
+  FileMetaInformation(..), 
+  fileMetaInformation 
+  ) where
 
 import Data.DICOM.Object
 import Data.DICOM.Dictionary
