@@ -3,6 +3,7 @@ version:             0.1.0.0
 synopsis:            A library for reading and writing DICOM files in the Explicit VR Little Endian transfer syntax.
 license:             GPL-3
 license-file:        LICENSE
+homepage:            http://github.com/dicomgrid/dicom-haskell-library/
 author:              Phil Freeman
 maintainer:          paf31@cantab.net
 copyright:           (c) DICOM Grid Inc. 2015 
