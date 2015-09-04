@@ -1,5 +1,5 @@
 name:                dicom
-version:             0.1.1.0
+version:             0.2.0.0
 synopsis:            A library for reading and writing DICOM files in the Explicit VR Little Endian transfer syntax.
 license:             GPL-3
 license-file:        LICENSE
@@ -20,12 +20,11 @@ library
                        Data.DICOM.Tag, 
                        Data.DICOM.VL, 
                        Data.DICOM.VR
-  build-depends:       base >=4.7 && <4.8, 
-                       time >=1.4 && <1.5, 
-                       bytestring >=0.10 && <0.11, 
-                       binary >=0.7 && <0.8, 
-                       old-locale >=1.0 && <1.1, 
-                       pretty >=1.1 && <1.2, 
-                       safe >=0.3 && <0.4
+  build-depends:       base >=4.8 && <4.9,
+                       time >=1.5,
+                       bytestring >=0.10,
+                       binary >=0.7,
+                       pretty >=1.1,
+                       safe >=0.3
   hs-source-dirs:      src
   default-language:    Haskell98
