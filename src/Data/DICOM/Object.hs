@@ -71,8 +71,7 @@ import Data.List (sortBy)
 import Data.Function (on)
 
 import Data.Time.Clock (UTCTime)
-import Data.Time.Format (formatTime)
-import System.Locale (defaultTimeLocale)
+import Data.Time.Format (formatTime,defaultTimeLocale)
 
 import Data.DICOM.VL
 import Data.DICOM.VR
