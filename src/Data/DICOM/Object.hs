@@ -95,7 +95,13 @@ dicm = BC.pack "DICM"
 
 data ElementContent
   = BytesContent B.ByteString
-  | SequenceContent Sequence deriving (Show, Eq)
+  | FragmentContent [B.ByteString]
+  | SequenceContent Sequence deriving Eq
+
+instance Show ElementContent where
+  showsPrec p (BytesContent _)    = showParen (p > 10) $ showString "BytesContent {..}"
+  showsPrec p (FragmentContent f) = showParen (p > 10) $ showString "FragmentContent { length = " . shows (length f) . showString " }"
+  showsPrec p (SequenceContent s) = showParen (p > 10) $ showString "SequenceContent " . showsPrec 11 s
 
 data Element = Element
   { elementTag     :: Tag
@@ -126,7 +132,10 @@ instance Binary Element where
     content <- case _vr of
       SQ -> SequenceContent <$> readSequence _vl
       _  -> case _vl of
-              UndefinedValueLength -> failWithOffset "Undefined VL not implemented"
+              UndefinedValueLength ->
+                case _tag of
+                  PixelData -> FragmentContent <$> readFragmentData
+                  _ -> failWithOffset "Undefined VL not implemented"
               _ -> do
                 bytes <- getByteString $ fromIntegral $ runVL _vl
                 return $ BytesContent bytes
@@ -141,6 +150,7 @@ instance Binary Element where
     case elementContent el of
       SequenceContent s -> writeSequence (elementVL el) s
       BytesContent bs -> putByteString bs
+      FragmentContent _ -> fail "Fragment content is not supported for writing."
 
 readSequence :: VL -> Get Sequence
 readSequence UndefinedValueLength = do
@@ -159,6 +169,19 @@ writeSequence _vl s = do
       putWord32le 0
     _ -> return ()
 
+readFragmentData :: Get [B.ByteString]
+readFragmentData = do
+  els <- untilG (isSequenceDelimitationItem <$> get) $ do
+    t <- get
+    case t of
+      Item -> do
+        itemLength <- getWord32le
+        getByteString $ fromIntegral $ itemLength
+      _ -> failWithOffset "Expected Item tag"
+  SequenceDelimitationItem <- get
+  skip 4
+  return els
+
 instance Binary SequenceItem where
   get = do
     t <- get
@@ -174,7 +197,7 @@ instance Binary SequenceItem where
           _ -> do
             els <- untilByteCount (fromIntegral itemLength) get
             return $ SequenceItem itemLength els
-      _ -> failWithOffset "Unexpected tag"
+      _ -> failWithOffset "Expected Item tag"
   put si = do
     put Item
     putWord32le $ sequenceItemLength si
@@ -201,7 +224,7 @@ untilByteCount count a = do
   start <- bytesRead
   flip untilG a $ do
     end <- bytesRead
-    return (end - start < count)
+    return (end - start >= count)
 
 isVLReserved :: VR -> Bool
 isVLReserved OB = True
@@ -355,4 +378,3 @@ item = SequenceItem (fromIntegral . runVL $ UndefinedValueLength) . sortBy (comp
 
 object :: [Element] -> Object
 object = Object . sortBy (compare `on` elementTag)
-
