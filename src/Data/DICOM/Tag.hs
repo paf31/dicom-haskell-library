@@ -23,6 +23,7 @@ module Data.DICOM.Tag
   , pattern Item
   , pattern ItemDelimitationItem
   , pattern SequenceDelimitationItem
+  , pattern PixelData
 
   , tag
   ) where
@@ -66,6 +67,8 @@ pattern SequenceGroup                = TagGroup 0xFFFE
 pattern Item                         = Tag SequenceGroup (TagElement 0xE000)
 pattern ItemDelimitationItem         = Tag SequenceGroup (TagElement 0xE00D)
 pattern SequenceDelimitationItem     = Tag SequenceGroup (TagElement 0xE0DD)
+
+pattern PixelData                    = Tag (TagGroup 0x7FE0) (TagElement 0x0010)
 
 -- Smart constructors
 
