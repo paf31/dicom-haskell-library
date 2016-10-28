@@ -289,7 +289,8 @@ element vr tg content = Element tg (vl $ fromIntegral count) vr (BytesContent pa
   (count, padded) = case B.length content of
                      len | len `mod` 2 == 0 -> (len, content)
                          | otherwise -> (len + 1, content <> BC.pack [padChar])
-  padChar | isStringVR vr = ' '
+  padChar | vr == UI = '\0'
+          | isStringVR vr = ' '
           | otherwise = '\0'
 
 -- String value representations
